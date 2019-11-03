@@ -1,0 +1,151 @@
+---
+title: "seminaR Tutorial"
+author: "Amy Pitts"
+date: "10/31/2019"
+output:
+  html_document: default
+  fig_width: 4
+  fig_height: 2
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Example of R Shiny 
+```{r}
+#install.package("shiny") #install this first
+#shiny::runExample("01_hello") #this will launch a web browser 
+  #To run this line of code copy and paste the above line and remove the #.
+```
+
+Our goal will be able make a website like this example.  We are going to insert our own dataset and funtionality. However, before we begin we should explore the dataset we are going to use. 
+
+# DataSet Exploration
+We are going to explore the state dataset that is provided in base R. No need to import any datasets. A indepth description of the dataset can be seen in the link:
+https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/state.html
+
+```{r}
+?state             # giving a discription of the dataset 
+```
+
+```{r}
+cbind(             # combining all these vectors to display 
+  state.abb,       # character vector of 2-letter abbreviations for the state names. 
+  state.area,      # numeric vector of state areas (in square miles).   
+  state.division,  # factor giving state divisions (New England, Middle Atlantic, South Atlantic, East South Central, West South Central, East North Central, West North Central, Mountain, and Pacific).
+  state.name,      # character vector giving the full state names.
+  state.region     # factor giving the region (Northeast, South, North Central, West) that each state belongs to.
+)[1:10,]           # only printing out the first 10 results
+
+state.x77[1:10,]   # matrix with 50 rows and 8 columns giving the following statistics in the respective columns.
+```
+
+Now that we understand how the dataset, lets put it all in a database to easily access it. 
+
+```{r}
+#make a dataframe of the data we want 
+state.df <- data.frame(state.abb,state.region,state.division,state.x77)
+head(state.df)  # printing out just the first few results 
+```
+
+# Graphing the data 
+Next part of data analysis usually comes with a quick data exploration.  We can start graphing different variables to decided what we want to put in our Shiny App. 
+There are so many different ways to graph variables but the most simple is using base R plot function. 
+
+```{r}
+par(mfrow=c(1,2))
+plot(state.df$Income, state.df$Life.Exp) # Plot looking at Income and Life Exp
+
+plot(state.df$Income, state.df$Illiteracy) # Plot looking at Income and iliiteracy
+```
+
+We can add titles and labels to these graphs.
+
+```{r}
+par(mfrow=c(1,2))
+plot(state.df$Income, state.df$Life.Exp, 
+     main = "Income and Life.Exp Graph",
+     xlab = "Income",
+     ylab = "Life.Exp",
+     col = "blue") # Plot looking at Income and Life Exp
+
+plot(state.df$Income, state.df$Illiteracy,
+     main = "Income and Illiteracy Graph",
+     xlab = "Illiteracy",
+     ylab = "Life.Exp",
+     col = "red") # Plot looking at Income and illiteracy
+```
+
+These are graphs in base R. We could use other packages such as ggplot or ggplot2 to make more elaborate and pretty graphs. To do this we need to import that package. 
+
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+```
+
+```{r}
+ggplot(state.df, aes(x = Income, y = Life.Exp)) +
+  geom_point() 
+
+ggplot(state.df, aes(x = Income, y = Illiteracy)) +
+  geom_point() 
+```
+
+We can add color based on the state region 
+
+```{r}
+ggplot(state.df, aes(x = Income, y = Life.Exp)) +
+  geom_point(aes(color = state.region)) 
+
+ggplot(state.df, aes(x = Income, y = Illiteracy)) +
+  geom_point(aes(color = state.region)) 
+```
+
+We can also split the plot up into different sections based on the state region. 
+
+```{r}
+ggplot(state.df, aes(x = Income, y = Life.Exp)) +
+  geom_point(aes(color = state.region)) +
+  facet_grid(. ~ state.region)
+
+ggplot(state.df, aes(x = Income, y = Illiteracy)) +
+  geom_point(aes(color = state.region)) +
+  facet_grid(. ~ state.region)
+```
+
+Being able to section off the data into different sections is a cool way to take a deeper look into this particular dataset.
+Lets look at what it would take to do this with base R 
+
+```{r}
+subset_N <- state.df[state.region == "Northeast",]
+plot(droplevels(subset_N$state.abb),subset_N$Income, xlab="State")
+```
+
+For each region we would run 
+```{r}
+subset_S <- state.df[state.region == "South",]
+subset_C <- state.df[state.region == "North Central",]
+subset_W <- state.df[state.region == "West",]
+```
+
+We can also plot all the graphs together 
+
+```{r}
+par(mfrow=c(2,2))
+plot(droplevels(subset_N$state.abb),subset_N$Income, xlab="State", main = "North East")
+plot(droplevels(subset_S$state.abb),subset_S$Income, xlab="State", main = "South")
+plot(droplevels(subset_C$state.abb),subset_C$Income, xlab="State", main = "North Central")
+plot(droplevels(subset_W$state.abb),subset_W$Income, xlab="State", main = "West")
+```
+
+Our next goal is to take this idea of sectioning off the data in this way and put it into a shiny application. We will let the user specify the region via a drop down menu to be able to change the the region. Re-run the following code piece in your console. 
+
+```{r}
+#shiny::runExample("01_hello")
+```
+
+To learn more about shiny visit: https://shiny.rstudio.com/tutorial/
+
+
