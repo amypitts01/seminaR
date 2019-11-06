@@ -150,4 +150,9 @@ To learn more about shiny visit: https://shiny.rstudio.com/tutorial/
 
 Different kind of controls: https://shiny.rstudio.com/tutorial/written-tutorial/lesson3/
 
+Great Examples: https://shiny.rstudio.com/gallery/
+
+Hosting your own RShiny Application: https://www.shinyapps.io/ 
+
+
 
