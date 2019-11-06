@@ -148,4 +148,6 @@ Our next goal is to take this idea of sectioning off the data in this way and pu
 
 To learn more about shiny visit: https://shiny.rstudio.com/tutorial/
 
+Different kind of controls: https://shiny.rstudio.com/tutorial/written-tutorial/lesson3/
+
 
